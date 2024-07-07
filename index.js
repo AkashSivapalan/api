@@ -11,7 +11,7 @@ const User = require('./models/user.js');
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow all origins
+    origin: '*', // Allow all origins
     credentials: true,
 }));
 app.use(express.json());
