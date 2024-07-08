@@ -27,7 +27,7 @@ app.use(session({
         mongoUrl: process.env.MONGO_URL
     }),
     cookie: { secure: false,
-        sameSite:None
+        sameSite:'None'
      } // set secure: true if using https
 }));
 // app.use(session({
