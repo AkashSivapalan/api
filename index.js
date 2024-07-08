@@ -9,11 +9,14 @@ const Transaction = require('./models/transactions.js');
 const User = require('./models/user.js');
 
 const app = express();
-
 app.use(cors({
-    origin: '*', // Allow all origins
+    origin: process.env.CORS_URL, // Allow all origins
     credentials: true,
 }));
+// app.use(cors({
+//     origin: 'http://financial-tracker-frontend.s3-website-us-east-1.amazonaws.com/', // Allow all origins
+//     credentials: true,
+// }));
 app.use(express.json());
 
 app.use(session({
