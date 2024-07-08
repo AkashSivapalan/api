@@ -26,7 +26,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL
     }),
-    cookie: { secure: true,
+    cookie: { secure: false,
         sameSite:'None'
      } // set secure: true if using https
 }));
