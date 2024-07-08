@@ -18,6 +18,7 @@ app.use(cors({
 
 app.use(express.json());
 
+
 app.use(session({
     secret: 'secret123', // change this to a strong secret in production
     resave: false,
@@ -25,11 +26,20 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL
     }),
-    cookie: { 
-        secure: isProduction, // true in production (HTTPS), false in development
-        sameSite: isProduction ? 'None' : 'Lax' // 'None' in production, 'Lax' in development
-    }
+    cookie: { secure: false } // set secure: true if using https
 }));
+// app.use(session({
+//     secret: 'secret123', // change this to a strong secret in production
+//     resave: false,
+//     saveUninitialized: true,
+//     store: MongoStore.create({
+//         mongoUrl: process.env.MONGO_URL
+//     }),
+//     cookie: { 
+//         secure: isProduction, // true in production (HTTPS), false in development
+//         sameSite: isProduction ? 'None' : 'Lax' // 'None' in production, 'Lax' in development
+//     }
+// }));
 
 app.get('/api/test', (req, res) => {
     console.log('hello');
@@ -105,15 +115,20 @@ app.get('/api/check-auth', (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.json({ status: 'error', error: err });
-        }
-        res.clearCookie('connect.sid', { path: '/' }); 
-        res.json({ status: 'ok' });
-    });
+    if (req.session) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Session destroy error:', err);
+                return res.status(500).json({ status: 'error', error: 'Failed to destroy session' });
+            }
+            res.clearCookie('connect.sid', { path: '/' });
+            res.json({ status: 'ok' });
+        });
+    } else {
+        console.warn('No session found to destroy');
+        res.status(400).json({ status: 'error', error: 'No session found' });
+    }
 });
-
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
