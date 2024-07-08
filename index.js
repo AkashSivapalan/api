@@ -109,7 +109,7 @@ app.get('/api/transactions/:email', async (req, res) => {
 });
 
 app.get('/api/check-auth', (req, res) => {
-    console.log(req)
+    console.log(req.session)
     if (req.session.user) {
         res.json({ status: 'ok', user: req.session.user });
     } else {
