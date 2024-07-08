@@ -26,22 +26,9 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL
     }),
-    cookie: { secure: false,
-        sameSite:'None'
+    cookie: { secure: false
      } // set secure: true if using https
 }));
-// app.use(session({
-//     secret: 'secret123', // change this to a strong secret in production
-//     resave: false,
-//     saveUninitialized: true,
-//     store: MongoStore.create({
-//         mongoUrl: process.env.MONGO_URL
-//     }),
-//     cookie: { 
-//         secure: isProduction, // true in production (HTTPS), false in development
-//         sameSite: isProduction ? 'None' : 'Lax' // 'None' in production, 'Lax' in development
-//     }
-// }));
 
 app.get('/api/test', (req, res) => {
     console.log('hello');
@@ -109,7 +96,6 @@ app.get('/api/transactions/:email', async (req, res) => {
 });
 
 app.get('/api/check-auth', (req, res) => {
-    console.log(req.session)
     if (req.session.user) {
         res.json({ status: 'ok', user: req.session.user });
     } else {
