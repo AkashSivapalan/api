@@ -9,14 +9,13 @@ const Transaction = require('./models/transactions.js');
 const User = require('./models/user.js');
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(cors({
-    origin: process.env.CORS_URL, // Allow all origins
+    origin: process.env.CORS_URL, // Allow your frontend origin
     credentials: true,
 }));
-// app.use(cors({
-//     origin: 'http://financial-tracker-frontend.s3-website-us-east-1.amazonaws.com/', // Allow all origins
-//     credentials: true,
-// }));
+
 app.use(express.json());
 
 app.use(session({
@@ -27,11 +26,10 @@ app.use(session({
         mongoUrl: process.env.MONGO_URL
     }),
     cookie: { 
-        secure: true, // set secure: true if using https
-        sameSite: 'None' // Explicitly set the SameSite attribute
+        secure: isProduction, // true in production (HTTPS), false in development
+        sameSite: isProduction ? 'None' : 'Lax' // 'None' in production, 'Lax' in development
     }
 }));
-
 
 app.get('/api/test', (req, res) => {
     console.log('hello');
@@ -75,7 +73,6 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-
 app.post('/api/transaction', async (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({status: 'error', message: 'Unauthorized'});
@@ -116,6 +113,7 @@ app.post('/api/logout', (req, res) => {
         res.json({ status: 'ok' });
     });
 });
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
