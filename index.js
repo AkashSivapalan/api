@@ -26,8 +26,12 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL
     }),
-    cookie: { secure: false } // set secure: true if using https
+    cookie: { 
+        secure: true, // set secure: true if using https
+        sameSite: 'None' // Explicitly set the SameSite attribute
+    }
 }));
+
 
 app.get('/api/test', (req, res) => {
     console.log('hello');
